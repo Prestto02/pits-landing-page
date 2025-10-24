@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Pits - Máximo rendimiento: control de combustible, aceite y neumáticos para flotas."
+    />
+    <title>Pits | Máximo rendimiento</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/pits-isotipo.svg" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ==================== BASE & VARIABLES ==================== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --accent: #ffff00;
+        --muted: #a0aec0;
+        --white: #ffffff;
+        --background-color: #000000ff;
+        --appbar-color: #151515;
+        --border-color: #2d2d2d;
+        --nav-height: 72px;
+        --section-padding-h: 1.5rem;
+        --mobile-nav-width: 280px;
+        --vh: 1vh; /* Variable para calcular la altura en JS */
+        --pattern-color: rgba(255, 255, 255, 0.09);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-color);
+        color: var(--white);
+        overflow-x: hidden;
+        background-size: 15px 15px;
+        /* ============================================================== */
+      }
+
+      h1,
+      h2 {
+        font-weight: 800;
+      }
+
+      /* Clase de transición para el menú móvil y contenido principal */
+      .content-transition {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+      }
+
+      /* CLASE PARA SECCIONES FULL-VIEWPORT-HEIGHT */
+      .full-screen-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: calc(var(--vh, 1vh) * 100);
+        padding: 0 var(--section-padding-h);
+        text-align: center;
+      }
+
+      /* ==================== UTILIDADES ==================== */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--section-padding-h);
+      }
+
+      .section-heading {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        margin-bottom: 20px;
+        line-height: 1.1;
+      }
+
+      .section-subheading {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        color: var(--muted);
+        text-align: center;
+        margin-bottom: 80px;
+      }
+
+      .cta-main {
+        background: var(--accent);
+        color: #151515 !important;
+        padding: 0.9rem 2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 25px;
+        transition: background-color 0.3s ease, transform 0.1s;
+        box-shadow: 0 4px 15px rgba(255, 255, 0, 0.2);
+      }
+
+      .cta-main:hover {
+        background: #e6e600;
+        transform: translateY(-2px);
+      }
+
+      /* ==================== NAV ==================== */
+      nav {
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 3rem);
+        max-width: 1240px;
+        background: var(--appbar-color);
+        border-radius: 12px;
+        z-index: 1000;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .logo img {
+        height: 48px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+        font-weight: 500;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--white);
+        position: relative;
+        padding: 0.5rem 0;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0px;
+        width: 0;
+        height: 3px;
+        background: var(--accent);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .nav-links a:hover::after,
+      .nav-links a.active::after {
+        width: 100%;
+      }
+
+      .cta {
+        background: var(--accent);
+        color: var(--appbar-color) !important;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        font-weight: 700;
+      }
+
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--white);
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 1001; /* Asegurar que esté por encima del main cuando se desplaza */
+      }
+
+      .hamburger-icon {
+        height: 30px;
+        width: 30px;
+      }
+
+      /* ==================== HERO INTRO & VISUAL ==================== */
+      main {
+        padding-top: 0;
+      }
+
+      .hero-intro {
+        padding-top: calc(var(--nav-height) + 40px);
+        /* Ya no tiene color de fondo explícito, hereda del body */
+      }
+
+      .hero-intro h1 {
+        font-size: clamp(3rem, 10vw, 5.5rem);
+        max-width: 900px;
+      }
+
+      .hero-intro h1 strong {
+        color: var(--accent);
+      }
+
+      .hero-intro p {
+        color: var(--muted);
+        margin-top: 1.5rem;
+        max-width: 650px;
+        font-size: 1.25rem;
+        font-weight: 300;
+      }
+
+      .hero-visual {
+        position: relative;
+      }
+
+      .hero-visual .hero-bg {
+        position: absolute;
+        inset: 0;
+        background-image: url("./assets/trucks-photo-1.jpeg");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: none;
+        will-change: transform, opacity;
+
+        /* Borde Difuminado */
+        mask-image: radial-gradient(
+          circle at center,
+          black 60%,
+          transparent 95%
+        );
+        -webkit-mask-image: radial-gradient(
+          circle at center,
+          black 60%,
+          transparent 95%
+        );
+      }
+
+      .hero-visual::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .hero-logo {
+        position: absolute;
+        z-index: 3;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+        transition: none;
+        will-change: transform, opacity;
+      }
+
+      .hero-logo img {
+        width: clamp(250px, 45vw, 600px);
+        height: auto;
+      }
+
+      /* ==================== CARACTERÍSTICAS (GRID) ==================== */
+      #caracteristicas {
+        padding-top: 120px;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2.5rem;
+        padding-bottom: 120px;
+      }
+
+      .feature-card {
+        background: var(--appbar-color);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: left;
+        border: 1px solid var(--border-color);
+        transition: border-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .feature-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+      }
+
+      .feature-card h3 {
+        color: var(--white);
+        margin-bottom: 0.5rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+
+      .feature-card h3 strong {
+        color: var(--accent);
+      }
+
+      .feature-card p {
+        color: var(--muted);
+        font-weight: 300;
+        line-height: 1.6;
+      }
+
+      .feature-icon {
+        height: 50px;
+        margin-bottom: 1.5rem;
+        filter: grayscale(100%) brightness(150%);
+      }
+
+      /* ==================== SOLUCIONES MODULARES (VIDEOS) ==================== */
+      .solution-block {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+        padding: 80px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .solution-block:last-of-type {
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      #soluciones .section-heading {
+        padding-top: 40px;
+        margin-bottom: 40px;
+      }
+
+      .solution-text {
+        flex: 1;
+      }
+
+      .solution-text h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .solution-text h2 strong {
+        color: var(--accent);
+      }
+
+      .solution-text p {
+        color: var(--muted);
+        line-height: 1.7;
+        font-weight: 300;
+        margin-bottom: 15px;
+      }
+
+      .solution-media {
+        flex: 1;
+        min-width: 45%;
+      }
+
+      .solution-media video,
+      .solution-media img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+      }
+
+      /* ==================== SECCIONES DE CONTENIDO ANIMADO (REPORTES, WEB, MÓVIL) ==================== */
+      .animated-section {
+        padding: 80px var(--section-padding-h);
+        overflow: hidden;
+      }
+
+      .animated-content {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      .animated-text {
+        flex: 1;
+        text-align: left;
+      }
+
+      .animated-text h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .animated-text h2 strong {
+        color: var(--accent);
+      }
+
+      .animated-text p {
+        color: var(--muted);
+        line-height: 1.7;
+        font-weight: 300;
+        margin-bottom: 15px;
+      }
+
+      /* REPORTES ES UN CASO ESPECIAL CON 3 COLUMNAS */
+      .reports-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1100px;
+      }
+
+      .reports-text {
+        flex-basis: 40%;
+        max-width: 400px;
+      }
+
+      .reports-media {
+        flex-basis: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .reports-media img {
+        max-width: 250px;
+        height: auto;
+        transition: transform 1s ease-out, opacity 1s ease-out;
+        will-change: transform, opacity;
+      }
+
+      /* WEB y MÓVIL (2 columnas) */
+      .animated-media {
+        flex: 1;
+        min-width: 45%;
+      }
+      .animated-media img {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        border-radius: 12px;
+        transition: transform 1s ease-out, opacity 1s ease-out;
+        will-change: transform, opacity;
+      }
+
+      /* ESTADOS INICIALES (FUERA DE PANTALLA) */
+      .animate-left-img,
+      .animate-right-img {
+        opacity: 0;
+      }
+
+      .animate-left-img {
+        transform: translateX(-100px);
+      }
+
+      .animate-right-img {
+        transform: translateX(100px);
+      }
+
+      /* ESTADOS FINALES (ANIMADOS) */
+      .visible {
+        transform: translateX(0) !important;
+        opacity: 1 !important;
+      }
+
+      /* ==================== CTA FINAL ==================== */
+      .contact-cta {
+        background-color: #0a0a0a;
+      }
+
+      .contact-cta h2 {
+        color: var(--white);
+        margin-bottom: 15px;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+
+      .contact-cta p {
+        font-size: 1.2rem;
+        color: var(--muted);
+        max-width: 700px;
+        margin: 0 auto 20px auto;
+      }
+
+      /* ==================== FOOTER ==================== */
+      footer {
+        padding: 30px 0;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border-color);
+      }
+
+      /* ==================== RESPONSIVE (Mobile First) ==================== */
+
+      @media (max-width: 1024px) {
+        .menu-toggle {
+          display: block;
+          /* Asegurar que el botón de menú esté visible y no se mueva con el contenido */
+          position: fixed; /* O absolute dentro de nav, pero fixed lo mantiene en el viewport */
+          right: 1.5rem; /* Ajustar posición */
+          top: 1.5rem; /* Ajustar posición */
+        }
+
+        /* La barra de navegación en sí también debe ser fixed para que el menu-toggle funcione como esperamos */
+        nav {
+          position: fixed; /* Mantiene la barra de navegación siempre visible */
+          width: 100%;
+          top: 0;
+          left: 0;
+          transform: translateX(0); /* Reiniciar transform */
+          border-radius: 0;
+          padding: 0.75rem 1.5rem; /* Ajustar padding si es necesario */
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada en móvil */
+          background-color: var(--appbar-color); /* Asegurar color de fondo */
+        }
+
+        .nav-links {
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: var(--mobile-nav-width);
+          height: 100%;
+          background-color: var(--appbar-color);
+          flex-direction: column;
+          padding: 120px 30px 30px 30px;
+          gap: 2rem;
+          transform: translateX(100%);
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); /* Sombra para el menú que desliza */
+        }
+
+        .nav-links.open {
+          transform: translateX(0);
+        }
+
+        /* Contenido principal y nav se desplazan juntos */
+        body.menu-open main,
+        body.menu-open nav:not(.nav-links) {
+          /* Excluir el nav-links para que no intente desplazarse a sí mismo */
+          transform: translateX(calc(-1 * var(--mobile-nav-width)));
+          pointer-events: none; /* Desactivar interacciones con el contenido mientras el menú está abierto */
+          user-select: none;
+        }
+        /* La clase content-transition ya está en el main, pero la nav principal también la necesita si queremos que se desplace */
+        body.menu-open nav.content-transition {
+          transform: translateX(calc(-1 * var(--mobile-nav-width)));
+        }
+
+        /* Bloques de Soluciones Modulares y Animados - APLASTAR EN MÓVIL */
+        .solution-block,
+        .animated-content,
+        .reports-content {
+          flex-direction: column;
+          gap: 40px;
+          padding: 40px 0;
+        }
+
+        .solution-text,
+        .animated-text {
+          text-align: center;
+          max-width: 100%;
+        }
+
+        /* Invertir el orden para la sección de Mantenimiento y Móvil */
+        /* Hacemos el texto superior en móvil para un mejor flujo de lectura */
+        #mantenimiento.solution-block,
+        #movil .animated-content {
+          flex-direction: column-reverse;
+        }
+
+        .reports-media img {
+          max-width: 150px; /* Reducir tamaño de reportes en móvil */
+          margin-bottom: 20px; /* Espacio extra entre imágenes de reportes */
+        }
+
+        /* Reajustar la animación en móvil para que entre de abajo/arriba */
+        .animate-left-img,
+        .animate-right-img {
+          transform: translateY(
+            30px
+          ); /* Entran desde abajo/arriba sutilmente */
+        }
+
+        /* Ajustes para el texto en móvil */
+        .section-heading {
+          font-size: clamp(
+            2rem,
+            8vw,
+            3.5rem
+          ); /* Títulos un poco más pequeños */
+          margin-bottom: 15px;
+        }
+        .section-subheading {
+          font-size: 1rem;
+          margin-bottom: 40px;
+        }
+        .hero-intro h1 {
+          font-size: clamp(2.8rem, 11vw, 4rem); /* Título hero ajustado */
+        }
+        .hero-intro p {
+          font-size: 1.1rem;
+        }
+
+        .solution-text h2,
+        .animated-text h2 {
+          font-size: clamp(1.8rem, 6vw, 2.5rem); /* Títulos de subsecciones */
+        }
+        .solution-text p,
+        .animated-text p {
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero-visual .hero-bg {
+          background-position: center bottom;
+        }
+
+        .hero-intro h1 {
+          font-size: clamp(2.2rem, 12vw, 3.5rem);
+        }
+
+        .section-heading {
+          margin-bottom: 15px;
+        }
+
+        .section-subheading {
+          margin-bottom: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="content-transition">
+      <a class="logo" href="#inicio">
+        <img src="./assets/pits-isotipo.svg" alt="PITS Logo" />
+      </a>
+
+      <button class="menu-toggle" aria-label="Abrir menú de navegación">
+        <svg
+          class="hamburger-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 6H20M4 12H20M4 18H20"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="#inicio" class="active">Inicio</a></li>
+        <li><a href="#caracteristicas">Características</a></li>
+        <li><a href="#soluciones">Soluciones</a></li>
+        <li><a href="#reportes">Reportes</a></li>
+        <li><a href="#plataforma">Plataforma</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <main id="main-content" class="content-transition">
+      <section class="hero-intro full-screen-section" id="inicio">
+        <h1>Máximo rendimiento y control operativo</h1>
+        <p>
+          La plataforma de gestión vehicular diseñada para impulsar la
+          productividad y maximizar la rentabilidad de su flota. Desplácese para
+          ver la animación.
+        </p>
+      </section>
+
+      <section class="hero-visual full-screen-section">
+        <div class="hero-bg"></div>
+        <div class="hero-logo">
+          <img src="./assets/pits-imagotipo.svg" alt="PITS Imagotipo" />
+        </div>
+      </section>
+
+      <section id="caracteristicas" class="container">
+        <h2 class="section-heading">
+          Tome el control total de su <strong>Flota</strong>.
+        </h2>
+        <p class="section-subheading">
+          Gestione cada aspecto de sus vehículos, conductores y gastos desde un
+          único panel intuitivo.
+        </p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3>Análisis de <strong>Datos</strong></h3>
+            <p>
+              Generación de informes inteligentes en tiempo real para una toma
+              de decisiones predictiva y estratégica.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>Plataforma <strong>Unificada</strong></h3>
+            <p>
+              Acceso seguro desde cualquier dispositivo, ofreciendo una
+              experiencia de usuario clara, rápida y robusta.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="soluciones" class="container">
+        <h2 class="section-heading">Soluciones Modulares.</h2>
+
+        <div id="combustible" class="solution-block">
+          <div class="solution-text">
+            <h2>Monitoreo de <strong> Consumo de Combustible</strong></h2>
+            <p>
+              Mida el consumo con precisión milimétrica, detecte desviaciones o
+              fraudes al instante. Reduzca significativamente los costes
+              operativos identificando eficiencias.
+            </p>
+            <p>
+              Centralice los datos de todas las tarjetas de combustible y
+              obtenga análisis comparativos detallados del rendimiento histórico
+              por unidad.
+            </p>
+          </div>
+          <div class="solution-media">
+            <video
+              src="./assets/fuel-video-1.mp4"
+              muted
+              playsinline
+              loop
+              preload="auto"
+              class="auto-play-video"
+            ></video>
+          </div>
+        </div>
+
+        <div id="mantenimiento" class="solution-block">
+          <div class="solution-text">
+            <h2>
+              Mantenimiento <strong>Preventivo</strong> y
+              <strong>Aceite</strong>
+            </h2>
+            <p>
+              Implemente un sistema de alertas automáticas basado en kilometraje
+              o fechas, asegurando que los cambios de aceite, filtros y
+              lubricantes nunca se olviden.
+            </p>
+            <p>
+              Prolongue la vida útil de sus motores y evite fallas costosas con
+              un historial de servicio completo y programado para cada vehículo.
+            </p>
+          </div>
+          <div class="solution-media">
+            <video
+              src="./assets/oil-video.mp4"
+              muted
+              playsinline
+              loop
+              preload="auto"
+              class="auto-play-video"
+            ></video>
+          </div>
+        </div>
+
+        <div id="neumaticos" class="solution-block">
+          <div class="solution-text">
+            <h2>Seguimiento Detallado de <strong>Neumáticos</strong></h2>
+            <p>
+              Monitoree la presión, la profundidad del dibujo y el historial
+              completo de rotación y reemplazos.
+            </p>
+            <p>
+              Asigne un ciclo de vida exacto a cada neumático de su flota,
+              minimizando los gastos por reemplazos prematuros y maximizando el
+              rendimiento del caucho.
+            </p>
+          </div>
+          <div class="solution-media">
+            <video
+              src="./assets/tire-video.mp4"
+              muted
+              playsinline
+              loop
+              preload="auto"
+              class="auto-play-video"
+            ></video>
+          </div>
+        </div>
+      </section>
+
+      <section id="reportes" class="animated-section full-screen-section">
+        <div class="reports-content container">
+          <div class="reports-media">
+            <img
+              src="./assets/pdf-report.png"
+              alt="Icono de reporte PDF"
+              class="animate-left-img"
+            />
+          </div>
+
+          <div class="reports-text">
+            <h2>Exportación Inteligente de <strong>Reportes</strong></h2>
+            <p>
+              Centralice la información de su flota y genere reportes detallados
+              con un solo clic. Nuestro sistema permite la exportación inmediata
+              de todos sus datos de gestión a formatos PDF y Hoja de Cálculo,
+              facilitando el análisis, la presentación y el cumplimiento
+              normativo.
+            </p>
+            <p>
+              Personalice los períodos y las variables para obtener la vista que
+              su operación necesita.
+            </p>
+          </div>
+
+          <div class="reports-media">
+            <img
+              src="./assets/excel-report-.png"
+              alt="Icono de reporte Excel"
+              class="animate-right-img"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="plataforma" class="animated-section full-screen-section">
+        <div class="animated-content container">
+          <div class="animated-text">
+            <h2>Gestión <strong>Web</strong> sin Límites</h2>
+            <p>
+              Acceda a la potencia completa de Pits desde cualquier navegador de
+              escritorio. La plataforma web está diseñada para tareas de
+              administración, análisis de datos profundos y gestión de usuarios,
+              ofreciendo una experiencia robusta e intuitiva para el control
+              total de su operación.
+            </p>
+          </div>
+          <div class="animated-media">
+            <img
+              src="./assets/laptop-no-bg-1.png"
+              alt="Plataforma PITS en laptop"
+              class="animate-right-img"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="movil" class="animated-section full-screen-section">
+        <div class="animated-content container">
+          <div class="animated-media">
+            <img
+              src="./assets/phone-no-bg.png"
+              alt="Plataforma PITS en teléfono móvil"
+              class="animate-left-img"
+            />
+          </div>
+          <div class="animated-text">
+            <h2>Movilidad y Control al <strong>Instante</strong></h2>
+            <p>
+              Lleve el poder de Pits en su bolsillo. Nuestra aplicación móvil
+              está disponible en Play Store y App Store, permitiendo a sus
+              conductores y personal de campo registrar datos, verificar tareas
+              y recibir notificaciones en tiempo real.
+            </p>
+            <p>
+              La interfaz optimizada para móviles asegura que la captura de
+              datos sea rápida y precisa.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contacto" class="contact-cta full-screen-section">
+        <div class="container">
+          <h2>
+            ¿Listo para llevar su flota al <strong>Máximo Rendimiento</strong>?
+          </h2>
+          <p></p>
+          <a href="https://pits-app.com" class="cta-main" target="_blank"
+            >¡Empieza Ahora!</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>
+          &copy; 2025 Pits | Máximo rendimiento. Todos los derechos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const heroBg = document.querySelector(".hero-bg");
+      const heroLogo = document.querySelector(".hero-logo");
+      const heroVisual = document.querySelector(".hero-visual");
+
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelector(".nav-links");
+      const allLinks = document.querySelectorAll(".nav-links a");
+      const body = document.body; // Referencia al body
+      const mainContent = document.getElementById("main-content");
+
+      const animatedElements = document.querySelectorAll(
+        ".animate-left-img, .animate-right-img"
+      );
+
+      let isAnimating = false;
+      let resizeTimer;
+
+      // --- 1. Fix para Altura Real de Viewport (móviles) ---
+      function setVhVariable() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--vh", `${vh}px`);
+      }
+      setVhVariable();
+
+      // --- 2. Funcionalidad de Videos (Reproducción automática) ---
+      function initializeVideos() {
+        const videos = document.querySelectorAll(".solution-media video");
+        videos.forEach((video) => {
+          video.muted = true;
+          video.playsinline = true;
+          video.loop = true;
+          // Usar Intersection Observer para optimizar el autoplay solo cuando son visibles
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  video
+                    .play()
+                    .catch((e) => console.warn("Autoplay bloqueado.", e));
+                } else {
+                  video.pause();
+                }
+              });
+            },
+            { threshold: 0.5 }
+          ); // Iniciar/Pausar cuando el 50% del video está visible
+
+          observer.observe(video);
+        });
+      }
+
+      // --- 3. Animación de Hero (Scroll Parallax/Fade) ---
+      function animateHero() {
+        const rect = heroVisual.getBoundingClientRect();
+        const viewHeight = window.innerHeight;
+
+        let progress = 1 - rect.top / (viewHeight * 0.8);
+        progress = Math.min(Math.max(progress, 0), 1);
+
+        const translateY = 100 - progress * 100;
+        heroBg.style.transform = `translateY(${translateY}px)`;
+        heroBg.style.opacity = progress;
+
+        const scale = 3 - progress * 2;
+        heroLogo.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        heroLogo.style.opacity = progress;
+      }
+
+      // --- 4. Animación de Entrada/Salida para nuevas Secciones ---
+      function checkAnimations() {
+        const viewHeight = window.innerHeight;
+        animatedElements.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const triggerPoint = viewHeight * 0.8;
+
+          // Si el elemento ha subido por encima del punto de activación (visible)
+          if (rect.top < triggerPoint && rect.bottom > 0) {
+            el.classList.add("visible");
+          } else {
+            el.classList.remove("visible");
+          }
+        });
+      }
+
+      // --- 5. Lógica de Scroll (Optimizado con requestAnimationFrame) ---
+      function handleScroll() {
+        if (!isAnimating) {
+          isAnimating = true;
+          requestAnimationFrame(updateAnimations);
+        }
+      }
+
+      function updateAnimations() {
+        animateHero();
+        checkAnimations();
+        isAnimating = false;
+      }
+
+      // --- Gestión de Eventos ---
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          setVhVariable();
+          updateAnimations();
+        }, 250);
+      });
+
+      window.addEventListener("load", () => {
+        initializeVideos();
+        updateAnimations();
+      });
+
+      // --- Funcionalidad del Menú Móvil ---
+      function toggleMenu() {
+        navLinks.classList.toggle("open");
+        body.classList.toggle("menu-open");
+        // Asegurarse de que el main también tenga la clase de transición para el desplazamiento
+        mainContent.classList.toggle("menu-open");
+      }
+
+      menuToggle.addEventListener("click", (e) => {
+        e.stopPropagation(); // Evitar que el click se propague al body y cierre el menú
+        toggleMenu();
+      });
+
+      allLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          // Si el menú está abierto, lo cierra al hacer clic en un enlace
+          if (navLinks.classList.contains("open")) {
+            toggleMenu();
+          }
+        });
+      });
+
+      // Cierra el menú si se hace clic fuera de él
+      body.addEventListener("click", (e) => {
+        // Si el menú está abierto Y el clic no fue dentro del menú de navegación ni en el botón de toggle
+        if (
+          body.classList.contains("menu-open") &&
+          !navLinks.contains(e.target) &&
+          !menuToggle.contains(e.target)
+        ) {
+          toggleMenu();
+        }
+      });
+    </script>
+  </body>
+</html>
