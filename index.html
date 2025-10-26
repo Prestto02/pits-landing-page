@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Pits - Máximo rendimiento: control de combustible, aceite y neumáticos para flotas."
+      content="Pits - Máximo rendimiento: control de combustible, aceite y neumáticos."
     />
     <title>Pits | Máximo rendimiento</title>
     <link rel="icon" type="image/svg+xml" href="./assets/pits-isotipo.svg" />
@@ -243,7 +243,11 @@
         /* No change to animation properties */
         position: absolute;
         inset: 0;
-        background-image: url("./assets/trucks-photo-1.jpeg");
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.7),
+            rgba(0, 0, 0, 0.7)
+          ),
+          url("./assets/trucks-photo-1.jpeg");
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
@@ -252,26 +256,41 @@
         transition: none;
         will-change: transform, opacity;
 
-        /* Borde Difuminado */
-        mask-image: radial-gradient(
-          circle at center,
-          black 60%,
-          transparent 95%
-        );
-        -webkit-mask-image: radial-gradient(
-          circle at center,
-          black 60%,
-          transparent 95%
-        );
+        /* Borde Difuminado en todos los bordes */
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 10%,
+            black 90%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 30%,
+            black 70%,
+            transparent 100%
+          );
+        mask-composite: intersect;
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 10%,
+            black 90%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 30%,
+            black 70%,
+            transparent 100%
+          );
+        -webkit-mask-composite: source-in;
       }
 
       .hero-visual::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.7); /* Slightly less opaque overlay */
-        pointer-events: none;
-        z-index: 2;
+        display: none;
       }
 
       .hero-logo {
@@ -765,6 +784,7 @@
       }
     </style>
   </head>
+
   <body>
     <nav>
       <a class="logo" href="#inicio">
@@ -803,8 +823,7 @@
         <h1>Máximo rendimiento y control operativo</h1>
         <p>
           La plataforma de gestión vehicular diseñada para impulsar la
-          productividad y maximizar la rentabilidad de su flota. Desplácese para
-          ver la animación.
+          productividad y maximizar la rentabilidad de tus vehículos.
         </p>
       </section>
 
@@ -816,9 +835,7 @@
       </section>
 
       <section id="caracteristicas" class="container">
-        <h2 class="section-heading">
-          Tome el control total de su <strong>Flota</strong>.
-        </h2>
+        <h2 class="section-heading">Tome el control total</h2>
         <p class="section-subheading">
           Gestione cada aspecto de sus vehículos, conductores y gastos desde un
           único panel intuitivo.
@@ -906,7 +923,7 @@
               completo de rotación y reemplazos.
             </p>
             <p>
-              Asigne un ciclo de vida exacto a cada neumático de su flota,
+              Asigne un ciclo de vida exacto a cada neumático de sus vhículos,
               minimizando los gastos por reemplazos prematuros y maximizando el
               rendimiento del caucho.
             </p>
@@ -934,14 +951,14 @@
             />
           </div>
 
-          <div class="reports-text">
+          <div class="animated-text">
             <h2>Exportación Inteligente de <strong>Reportes</strong></h2>
             <p>
-              Centralice la información de su flota y genere reportes detallados
-              con un solo clic. Nuestro sistema permite la exportación inmediata
-              de todos sus datos de gestión a formatos PDF y Hoja de Cálculo,
-              facilitando el análisis, la presentación y el cumplimiento
-              normativo.
+              Centralice la información de sus vehículos y genere reportes
+              detallados con un solo clic. Nuestro sistema permite la
+              exportación inmediata de todos sus datos de gestión a formatos PDF
+              y Hoja de Cálculo, facilitando el análisis, la presentación y el
+              cumplimiento normativo.
             </p>
             <p>
               Personalice los períodos y las variables para obtener la vista que
@@ -1009,7 +1026,8 @@
       <section id="contacto" class="contact-cta full-screen-section">
         <div class="container">
           <h2>
-            ¿Listo para llevar su flota al <strong>Máximo Rendimiento</strong>?
+            ¿Listo para llevar sus vehículos al
+            <strong>Máximo Rendimiento</strong>?
           </h2>
           <p></p>
           <a href="https://pits-app.com" class="cta-main" target="_blank"
