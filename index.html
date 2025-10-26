@@ -16,7 +16,7 @@
     />
 
     <style>
-      /* ==================== BASE & VARIABLES ==================== */
+      /* ==================== BASE & VARIABLES (CLEANED) ==================== */
       * {
         margin: 0;
         padding: 0;
@@ -27,14 +27,16 @@
         --accent: #ffff00;
         --muted: #a0aec0;
         --white: #ffffff;
-        --background-color: #000000ff;
+        --background-color: #000000;
         --appbar-color: #151515;
         --border-color: #2d2d2d;
         --nav-height: 72px;
-        --section-padding-h: 1.5rem;
+        --section-padding-v: 6rem; /* Increased vertical padding */
+        --section-padding-h: 1.5rem; /* Increased base horizontal padding */
         --mobile-nav-width: 280px;
-        --vh: 1vh; /* Variable para calcular la altura en JS */
-        --pattern-color: rgba(255, 255, 255, 0.09);
+        --vh: 1vh;
+        --pattern-color: rgba(255, 255, 255, 0.08);
+        --nav-offset: 85px; /* Altura del navbar + margen para scroll suave */
       }
 
       body {
@@ -42,8 +44,12 @@
         background-color: var(--background-color);
         color: var(--white);
         overflow-x: hidden;
+        background-image: radial-gradient(
+          var(--pattern-color) 1px,
+          transparent 1px
+        );
         background-size: 15px 15px;
-        /* ============================================================== */
+        transition: overflow 0.3s ease; /* Transición para el bloqueo de scroll */
       }
 
       h1,
@@ -51,10 +57,56 @@
         font-weight: 800;
       }
 
-      /* Clase de transición para el menú móvil y contenido principal */
-      .content-transition {
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: transform;
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ==================== UTILIDADES & ESTRUCTURA ==================== */
+      .container {
+        max-width: 1200px; /* Reduced max-width for better content flow on large screens */
+        margin: 0 auto;
+        padding: 0 var(--section-padding-h);
+      }
+
+      section:not(.full-screen-section) {
+        padding-top: var(--section-padding-v);
+        padding-bottom: var(--section-padding-v);
+      }
+
+      .section-heading {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        margin-bottom: 20px;
+        line-height: 1.1;
+      }
+
+      .section-subheading {
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        color: var(--muted);
+        text-align: center;
+        margin-bottom: 90px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .cta-main {
+        background: var(--accent);
+        color: #151515 !important;
+        padding: 1rem 2.2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 30px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(255, 255, 0, 0.3);
+      }
+
+      .cta-main:hover {
+        background: #e6e600;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(255, 255, 0, 0.4);
       }
 
       /* CLASE PARA SECCIONES FULL-VIEWPORT-HEIGHT */
@@ -69,69 +121,32 @@
         text-align: center;
       }
 
-      /* ==================== UTILIDADES ==================== */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 var(--section-padding-h);
-      }
-
-      .section-heading {
-        font-size: clamp(2.5rem, 6vw, 4rem);
-        margin-bottom: 20px;
-        line-height: 1.1;
-      }
-
-      .section-subheading {
-        font-size: clamp(1.1rem, 2vw, 1.4rem);
-        color: var(--muted);
-        text-align: center;
-        margin-bottom: 80px;
-      }
-
-      .cta-main {
-        background: var(--accent);
-        color: #151515 !important;
-        padding: 0.9rem 2rem;
-        border-radius: 8px;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 25px;
-        transition: background-color 0.3s ease, transform 0.1s;
-        box-shadow: 0 4px 15px rgba(255, 255, 0, 0.2);
-      }
-
-      .cta-main:hover {
-        background: #e6e600;
-        transform: translateY(-2px);
-      }
-
-      /* ==================== NAV ==================== */
+      /* ==================== NAV (FIXED & IMPROVED) ==================== */
       nav {
         position: fixed;
-        top: 1rem;
+        top: 1.5rem;
         left: 50%;
         transform: translateX(-50%);
-        width: calc(100% - 3rem);
+        width: calc(100% - 4rem);
         max-width: 1240px;
         background: var(--appbar-color);
         border-radius: 12px;
         z-index: 1000;
-        padding: 0.75rem 1.5rem;
+        padding: 0.75rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        transition: all 0.3s ease;
       }
 
       .logo img {
-        height: 48px;
+        height: 40px;
       }
 
       .nav-links {
         display: flex;
-        gap: 2rem;
+        gap: 2.5rem;
         list-style: none;
         font-weight: 500;
       }
@@ -170,6 +185,11 @@
         padding: 0.6rem 1.2rem;
         border-radius: 6px;
         font-weight: 700;
+        transition: background-color 0.3s ease, transform 0.1s;
+      }
+
+      .cta:hover {
+        background: #e6e600;
       }
 
       .menu-toggle {
@@ -179,7 +199,7 @@
         color: var(--white);
         cursor: pointer;
         padding: 0.5rem;
-        z-index: 1001; /* Asegurar que esté por encima del main cuando se desplaza */
+        z-index: 1001;
       }
 
       .hamburger-icon {
@@ -193,13 +213,13 @@
       }
 
       .hero-intro {
-        padding-top: calc(var(--nav-height) + 40px);
-        /* Ya no tiene color de fondo explícito, hereda del body */
+        /* Adjusted padding to account for fixed nav */
+        padding-top: calc(var(--nav-height) + 60px);
       }
 
       .hero-intro h1 {
-        font-size: clamp(3rem, 10vw, 5.5rem);
-        max-width: 900px;
+        font-size: clamp(3.5rem, 11vw, 6rem); /* Bolder impact */
+        max-width: 1000px;
       }
 
       .hero-intro h1 strong {
@@ -209,9 +229,10 @@
       .hero-intro p {
         color: var(--muted);
         margin-top: 1.5rem;
-        max-width: 650px;
-        font-size: 1.25rem;
+        max-width: 700px;
+        font-size: 1.3rem; /* Slightly larger text */
         font-weight: 300;
+        line-height: 1.6;
       }
 
       .hero-visual {
@@ -219,6 +240,7 @@
       }
 
       .hero-visual .hero-bg {
+        /* No change to animation properties */
         position: absolute;
         inset: 0;
         background-image: url("./assets/trucks-photo-1.jpeg");
@@ -247,7 +269,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background-color: rgba(0, 0, 0, 0.75);
+        background-color: rgba(0, 0, 0, 0.7); /* Slightly less opaque overlay */
         pointer-events: none;
         z-index: 2;
       }
@@ -269,34 +291,35 @@
       }
 
       /* ==================== CARACTERÍSTICAS (GRID) ==================== */
-      #caracteristicas {
-        padding-top: 120px;
-      }
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2.5rem;
-        padding-bottom: 120px;
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(320px, 1fr)
+        ); /* Slightly wider min size */
+        gap: 3rem; /* Increased gap */
       }
 
       .feature-card {
         background: var(--appbar-color);
         border-radius: 12px;
-        padding: 2rem;
+        padding: 2.5rem; /* Increased padding */
         text-align: left;
         border: 1px solid var(--border-color);
-        transition: border-color 0.3s ease, transform 0.3s ease;
+        transition: border-color 0.3s ease, transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
       .feature-card:hover {
         border-color: var(--accent);
-        transform: translateY(-5px);
+        transform: translateY(-8px); /* More pronounced lift */
+        box-shadow: 0 10px 30px rgba(255, 255, 0, 0.1);
       }
 
       .feature-card h3 {
         color: var(--white);
-        margin-bottom: 0.5rem;
-        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.8rem; /* Slightly larger heading */
         font-weight: 700;
       }
 
@@ -307,31 +330,21 @@
       .feature-card p {
         color: var(--muted);
         font-weight: 300;
-        line-height: 1.6;
-      }
-
-      .feature-icon {
-        height: 50px;
-        margin-bottom: 1.5rem;
-        filter: grayscale(100%) brightness(150%);
+        line-height: 1.7;
+        font-size: 1rem;
       }
 
       /* ==================== SOLUCIONES MODULARES (VIDEOS) ==================== */
       .solution-block {
         display: flex;
         align-items: center;
-        gap: 60px;
-        padding: 80px 0;
+        gap: 80px; /* Increased gap for desktop */
+        padding: 90px 0; /* Increased padding */
         border-bottom: 1px solid var(--border-color);
       }
 
       .solution-block:last-of-type {
-        border-bottom: 1px solid var(--border-color);
-      }
-
-      #soluciones .section-heading {
-        padding-top: 40px;
-        margin-bottom: 40px;
+        border-bottom: none; /* Removed redundant border */
       }
 
       .solution-text {
@@ -339,7 +352,7 @@
       }
 
       .solution-text h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
         margin-bottom: 1rem;
         font-weight: 700;
       }
@@ -352,12 +365,14 @@
         color: var(--muted);
         line-height: 1.7;
         font-weight: 300;
-        margin-bottom: 15px;
+        margin-bottom: 18px;
+        font-size: 1.1rem;
       }
 
       .solution-media {
         flex: 1;
         min-width: 45%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Added shadow to media */
       }
 
       .solution-media video,
@@ -365,20 +380,31 @@
         width: 100%;
         height: auto;
         border-radius: 12px;
+        display: block; /* Fix for video/image baseline space */
       }
 
       /* ==================== SECCIONES DE CONTENIDO ANIMADO (REPORTES, WEB, MÓVIL) ==================== */
       .animated-section {
-        padding: 80px var(--section-padding-h);
+        padding: 0 var(--section-padding-h);
         overflow: hidden;
+      }
+
+      .animated-section.full-screen-section {
+        min-height: auto; /* Allow content to dictate height */
+        padding-top: var(--section-padding-v);
+        padding-bottom: var(--section-padding-v);
       }
 
       .animated-content {
         display: flex;
         align-items: center;
-        gap: 60px;
-        max-width: 1000px;
+        gap: 80px;
         width: 100%;
+        max-width: 1100px; /* Increased max width for content inside */
+      }
+
+      .animated-content.container {
+        padding: 0; /* Container in this context is only for centering/max-width */
       }
 
       .animated-text {
@@ -387,7 +413,7 @@
       }
 
       .animated-text h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
         margin-bottom: 1rem;
         font-weight: 700;
       }
@@ -401,6 +427,7 @@
         line-height: 1.7;
         font-weight: 300;
         margin-bottom: 15px;
+        font-size: 1.1rem;
       }
 
       /* REPORTES ES UN CASO ESPECIAL CON 3 COLUMNAS */
@@ -408,13 +435,14 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 30px; /* Added gap */
         width: 100%;
         max-width: 1100px;
       }
 
       .reports-text {
         flex-basis: 40%;
-        max-width: 400px;
+        max-width: 450px; /* Slightly wider */
       }
 
       .reports-media {
@@ -425,7 +453,7 @@
       }
 
       .reports-media img {
-        max-width: 250px;
+        max-width: 280px; /* Slightly larger image */
         height: auto;
         transition: transform 1s ease-out, opacity 1s ease-out;
         will-change: transform, opacity;
@@ -438,7 +466,7 @@
       }
       .animated-media img {
         width: 100%;
-        max-width: 500px;
+        max-width: 550px; /* Slightly larger image */
         height: auto;
         border-radius: 12px;
         transition: transform 1s ease-out, opacity 1s ease-out;
@@ -468,172 +496,277 @@
       /* ==================== CTA FINAL ==================== */
       .contact-cta {
         background-color: #0a0a0a;
+        padding-top: calc(
+          var(--section-padding-v) * 1.5
+        ); /* Increased padding */
+        padding-bottom: calc(var(--section-padding-v) * 1.5);
       }
 
       .contact-cta h2 {
         color: var(--white);
         margin-bottom: 15px;
-        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-size: clamp(2.5rem, 5vw, 4rem);
       }
 
       .contact-cta p {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         color: var(--muted);
-        max-width: 700px;
+        max-width: 800px;
         margin: 0 auto 20px auto;
+        line-height: 1.6;
       }
 
       /* ==================== FOOTER ==================== */
       footer {
-        padding: 30px 0;
+        padding: 40px 0; /* Increased padding */
         text-align: center;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: var(--muted);
         border-top: 1px solid var(--border-color);
       }
 
-      /* ==================== RESPONSIVE (Mobile First) ==================== */
+      /* ==================== RESPONSIVE (MOBILE FIRST) ==================== */
 
       @media (max-width: 1024px) {
-        .menu-toggle {
-          display: block;
-          /* Asegurar que el botón de menú esté visible y no se mueva con el contenido */
-          position: fixed; /* O absolute dentro de nav, pero fixed lo mantiene en el viewport */
-          right: 1.5rem; /* Ajustar posición */
-          top: 1.5rem; /* Ajustar posición */
+        :root {
+          --section-padding-v: 3rem;
+          --section-padding-h: 1.25rem;
+          --mobile-appbar-height: 64px;
         }
 
-        /* La barra de navegación en sí también debe ser fixed para que el menu-toggle funcione como esperamos */
         nav {
-          position: fixed; /* Mantiene la barra de navegación siempre visible */
-          width: 100%;
           top: 0;
           left: 0;
-          transform: translateX(0); /* Reiniciar transform */
+          transform: translateX(0);
+          width: 100%;
           border-radius: 0;
-          padding: 0.75rem 1.5rem; /* Ajustar padding si es necesario */
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada en móvil */
-          background-color: var(--appbar-color); /* Asegurar color de fondo */
+          padding: 1rem 1.25rem;
+          background-color: var(--appbar-color);
+          height: var(--mobile-appbar-height);
+        }
+
+        .logo img {
+          height: 36px;
+        }
+
+        .menu-toggle {
+          display: block;
+          position: absolute;
+          right: 1.25rem;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 1002;
         }
 
         .nav-links {
           position: fixed;
-          top: 0;
-          right: 0;
-          width: var(--mobile-nav-width);
-          height: 100%;
-          background-color: var(--appbar-color);
+          left: 0;
+          width: 100%;
+          z-index: 1001;
+          top: var(--mobile-appbar-height);
+          height: calc(100vh - var(--mobile-appbar-height));
+          height: calc(var(--vh, 1vh) * 100 - var(--mobile-appbar-height));
+          background-color: rgba(21, 21, 21, 0.98);
+          backdrop-filter: blur(10px);
           flex-direction: column;
-          padding: 120px 30px 30px 30px;
+          padding: 2rem 1.5rem;
           gap: 2rem;
-          transform: translateX(100%);
+          transform: translateY(100%);
           transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); /* Sombra para el menú que desliza */
+          box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          overflow-y: auto;
         }
 
         .nav-links.open {
-          transform: translateX(0);
+          transform: translateY(0);
         }
 
-        /* Contenido principal y nav se desplazan juntos */
-        body.menu-open main,
-        body.menu-open nav:not(.nav-links) {
-          /* Excluir el nav-links para que no intente desplazarse a sí mismo */
-          transform: translateX(calc(-1 * var(--mobile-nav-width)));
-          pointer-events: none; /* Desactivar interacciones con el contenido mientras el menú está abierto */
-          user-select: none;
-        }
-        /* La clase content-transition ya está en el main, pero la nav principal también la necesita si queremos que se desplace */
-        body.menu-open nav.content-transition {
-          transform: translateX(calc(-1 * var(--mobile-nav-width)));
+        .nav-links li {
+          width: 100%;
         }
 
-        /* Bloques de Soluciones Modulares y Animados - APLASTAR EN MÓVIL */
-        .solution-block,
-        .animated-content,
-        .reports-content {
+        .nav-links a {
+          display: block;
+          padding: 1rem;
+          font-size: 1.25rem;
+        }
+
+        .nav-links a::after {
+          bottom: 0;
+        }
+
+        .hero-intro {
+          padding-top: calc(var(--mobile-appbar-height) + 3rem);
+          min-height: auto;
+          padding-bottom: 3rem;
+        }
+
+        .hero-intro h1 {
+          font-size: clamp(2rem, 9vw, 3rem);
+          line-height: 1.2;
+        }
+
+        .hero-intro p {
+          font-size: 1rem;
+          margin-top: 1rem;
+        }
+
+        .hero-visual {
+          min-height: 60vh;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .feature-card {
+          padding: 2rem 1.5rem;
+        }
+
+        .feature-card h3 {
+          font-size: 1.4rem;
+        }
+
+        .solution-block {
           flex-direction: column;
-          gap: 40px;
-          padding: 40px 0;
+          gap: 2rem;
+          padding: 3rem 0;
         }
 
         .solution-text,
-        .animated-text {
+        .animated-text,
+        .reports-text {
           text-align: center;
           max-width: 100%;
         }
 
-        /* Invertir el orden para la sección de Mantenimiento y Móvil */
-        /* Hacemos el texto superior en móvil para un mejor flujo de lectura */
+        .solution-text h2,
+        .animated-text h2 {
+          font-size: clamp(1.75rem, 7vw, 2.25rem);
+          margin-bottom: 1rem;
+        }
+
+        .solution-text p,
+        .animated-text p {
+          font-size: 1rem;
+          line-height: 1.6;
+        }
+
+        .solution-media {
+          width: 100%;
+          min-width: unset;
+        }
+
         #mantenimiento.solution-block,
         #movil .animated-content {
           flex-direction: column-reverse;
         }
 
-        .reports-media img {
-          max-width: 150px; /* Reducir tamaño de reportes en móvil */
-          margin-bottom: 20px; /* Espacio extra entre imágenes de reportes */
+        .animated-content {
+          flex-direction: column;
+          gap: 2rem;
         }
 
-        /* Reajustar la animación en móvil para que entre de abajo/arriba */
+        .animated-media {
+          width: 100%;
+          min-width: unset;
+        }
+
+        .animated-media img {
+          max-width: 100%;
+        }
+
+        .reports-content {
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .reports-text {
+          flex-basis: 100%;
+          order: 1;
+        }
+
+        .reports-media {
+          flex-basis: auto;
+        }
+
+        .reports-media:first-child {
+          order: 0;
+        }
+
+        .reports-media:last-child {
+          order: 2;
+        }
+
+        .reports-media img {
+          max-width: 100px;
+        }
+
         .animate-left-img,
         .animate-right-img {
-          transform: translateY(
-            30px
-          ); /* Entran desde abajo/arriba sutilmente */
+          transform: translateY(20px);
         }
 
-        /* Ajustes para el texto en móvil */
         .section-heading {
-          font-size: clamp(
-            2rem,
-            8vw,
-            3.5rem
-          ); /* Títulos un poco más pequeños */
-          margin-bottom: 15px;
+          font-size: clamp(2rem, 8vw, 3rem);
+          margin-bottom: 1rem;
+          text-align: center;
         }
+
         .section-subheading {
           font-size: 1rem;
-          margin-bottom: 40px;
-        }
-        .hero-intro h1 {
-          font-size: clamp(2.8rem, 11vw, 4rem); /* Título hero ajustado */
-        }
-        .hero-intro p {
-          font-size: 1.1rem;
+          margin-bottom: 2.5rem;
         }
 
-        .solution-text h2,
-        .animated-text h2 {
-          font-size: clamp(1.8rem, 6vw, 2.5rem); /* Títulos de subsecciones */
+        .contact-cta {
+          padding-top: 4rem;
+          padding-bottom: 4rem;
         }
-        .solution-text p,
-        .animated-text p {
+
+        .contact-cta h2 {
+          font-size: clamp(2rem, 7vw, 3rem);
+        }
+
+        .contact-cta p {
+          font-size: 1rem;
+        }
+
+        .cta-main {
+          padding: 0.875rem 1.75rem;
           font-size: 1rem;
         }
       }
-
       @media (max-width: 600px) {
         .hero-visual .hero-bg {
-          background-position: center bottom;
+          background-position: 50% 80%; /* Move image up slightly on small screens */
         }
 
         .hero-intro h1 {
           font-size: clamp(2.2rem, 12vw, 3.5rem);
         }
 
-        .section-heading {
-          margin-bottom: 15px;
+        .reports-content {
+          /* Stack media elements vertically */
+          flex-direction: column;
         }
 
-        .section-subheading {
-          margin-bottom: 30px;
+        .reports-media {
+          flex-basis: auto;
+        }
+
+        .reports-media img {
+          max-width: 100px;
         }
       }
     </style>
   </head>
   <body>
-    <nav class="content-transition">
+    <nav>
       <a class="logo" href="#inicio">
         <img src="./assets/pits-isotipo.svg" alt="PITS Logo" />
       </a>
@@ -656,7 +789,7 @@
       </button>
 
       <ul class="nav-links">
-        <li><a href="#inicio" class="active">Inicio</a></li>
+        <li><a href="#inicio">Inicio</a></li>
         <li><a href="#caracteristicas">Características</a></li>
         <li><a href="#soluciones">Soluciones</a></li>
         <li><a href="#reportes">Reportes</a></li>
@@ -665,7 +798,7 @@
       </ul>
     </nav>
 
-    <main id="main-content" class="content-transition">
+    <main id="main-content">
       <section class="hero-intro full-screen-section" id="inicio">
         <h1>Máximo rendimiento y control operativo</h1>
         <p>
@@ -738,6 +871,16 @@
         </div>
 
         <div id="mantenimiento" class="solution-block">
+          <div class="solution-media">
+            <video
+              src="./assets/oil-video-2.mp4"
+              muted
+              playsinline
+              loop
+              preload="auto"
+              class="auto-play-video"
+            ></video>
+          </div>
           <div class="solution-text">
             <h2>
               Mantenimiento <strong>Preventivo</strong> y
@@ -752,16 +895,6 @@
               Prolongue la vida útil de sus motores y evite fallas costosas con
               un historial de servicio completo y programado para cada vehículo.
             </p>
-          </div>
-          <div class="solution-media">
-            <video
-              src="./assets/oil-video.mp4"
-              muted
-              playsinline
-              loop
-              preload="auto"
-              class="auto-play-video"
-            ></video>
           </div>
         </div>
 
@@ -902,8 +1035,6 @@
       const menuToggle = document.querySelector(".menu-toggle");
       const navLinks = document.querySelector(".nav-links");
       const allLinks = document.querySelectorAll(".nav-links a");
-      const body = document.body; // Referencia al body
-      const mainContent = document.getElementById("main-content");
 
       const animatedElements = document.querySelectorAll(
         ".animate-left-img, .animate-right-img"
@@ -911,6 +1042,7 @@
 
       let isAnimating = false;
       let resizeTimer;
+      const NAV_OFFSET = 85; // Correspondiente a --nav-offset
 
       // --- 1. Fix para Altura Real de Viewport (móviles) ---
       function setVhVariable() {
@@ -926,7 +1058,6 @@
           video.muted = true;
           video.playsinline = true;
           video.loop = true;
-          // Usar Intersection Observer para optimizar el autoplay solo cuando son visibles
           const observer = new IntersectionObserver(
             (entries) => {
               entries.forEach((entry) => {
@@ -940,7 +1071,7 @@
               });
             },
             { threshold: 0.5 }
-          ); // Iniciar/Pausar cuando el 50% del video está visible
+          );
 
           observer.observe(video);
         });
@@ -970,7 +1101,6 @@
           const rect = el.getBoundingClientRect();
           const triggerPoint = viewHeight * 0.8;
 
-          // Si el elemento ha subido por encima del punto de activación (visible)
           if (rect.top < triggerPoint && rect.bottom > 0) {
             el.classList.add("visible");
           } else {
@@ -988,7 +1118,10 @@
       }
 
       function updateAnimations() {
-        animateHero();
+        // Solo animar si la sección hero está visible o cerca
+        if (heroVisual.getBoundingClientRect().bottom > 0) {
+          animateHero();
+        }
         checkAnimations();
         isAnimating = false;
       }
@@ -1010,37 +1143,48 @@
 
       // --- Funcionalidad del Menú Móvil ---
       function toggleMenu() {
-        navLinks.classList.toggle("open");
-        body.classList.toggle("menu-open");
-        // Asegurarse de que el main también tenga la clase de transición para el desplazamiento
-        mainContent.classList.toggle("menu-open");
+        const isOpen = navLinks.classList.toggle("open");
+        // Bloquear el scroll del cuerpo cuando el menú está abierto
+        document.body.style.overflow = isOpen ? "hidden" : "auto";
       }
 
       menuToggle.addEventListener("click", (e) => {
-        e.stopPropagation(); // Evitar que el click se propague al body y cierre el menú
+        e.stopPropagation();
         toggleMenu();
       });
 
+      // --- CORRECCIÓN: Desplazamiento Suave (Smooth Scroll) ---
       allLinks.forEach((link) => {
         link.addEventListener("click", (e) => {
-          // Si el menú está abierto, lo cierra al hacer clic en un enlace
+          e.preventDefault(); // Detener el salto instantáneo
+
           if (navLinks.classList.contains("open")) {
-            toggleMenu();
+            toggleMenu(); // Cerrar el menú
+          }
+
+          const targetId = link.getAttribute("href");
+          const targetSection = document.querySelector(targetId);
+
+          if (targetSection) {
+            // Determinar la posición de destino
+            // Obtener la posición absoluta del elemento
+            const offset =
+              targetSection.getBoundingClientRect().top + window.scrollY;
+
+            // Ajustar la posición para el menú fijo
+            const finalPosition =
+              targetId === "#inicio"
+                ? 0 // Ir al tope de la página para la sección 'inicio'
+                : offset - NAV_OFFSET;
+
+            window.scrollTo({
+              top: finalPosition,
+              behavior: "smooth", // ¡Scroll suave!
+            });
           }
         });
       });
-
-      // Cierra el menú si se hace clic fuera de él
-      body.addEventListener("click", (e) => {
-        // Si el menú está abierto Y el clic no fue dentro del menú de navegación ni en el botón de toggle
-        if (
-          body.classList.contains("menu-open") &&
-          !navLinks.contains(e.target) &&
-          !menuToggle.contains(e.target)
-        ) {
-          toggleMenu();
-        }
-      });
+      // Se omite el listener de clic en el body, ya que el menú es overlay de pantalla completa y se cierra al hacer clic en un enlace o en el botón de toggle.
     </script>
   </body>
 </html>
