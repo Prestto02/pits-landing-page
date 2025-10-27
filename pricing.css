@@ -12,17 +12,28 @@
 }
 
 .pricing-card {
+  border-radius: 12px;
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  transition: all 0.3s ease;
+
+  /* --- MODIFICACIONES SOLICITADAS --- */
+  background: transparent; /* Elimina el fondo de la tarjeta */
+  border: none; /* Elimina el borde de la tarjeta */
+  transition: none; /* Elimina la transición que hace el difuminado */
+  /* --------------------------------- */
+
   position: relative;
+  will-change: transform;
 }
 
+/* Eliminar el efecto de hover */
 .pricing-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-8px);
+  /* --- MODIFICACIONES SOLICITADAS --- */
+  border-color: transparent; /* Asegura que no haya borde al hacer hover */
+  transform: none; /* Elimina el movimiento de subida */
+  box-shadow: none; /* Elimina la sombra/difuminado al hacer hover */
+  /* --------------------------------- */
 }
 
 .plan-name {
@@ -78,11 +89,11 @@
   line-height: 1.8;
 }
 
+/* Inicialmente ocultar los features */
 .plan-features li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: transform, opacity;
 }
 
 .plan-features li::before {

@@ -21,7 +21,7 @@
   <body>
     <nav>
       <a class="logo" href="#inicio">
-        <img src="./assets/pits-isotipo.svg" alt="PITS Logo" />
+        <img src="./assets/pits-imagotipo.svg" alt="PITS Logo" />
       </a>
 
       <button class="menu-toggle" aria-label="Abrir menú de navegación">
@@ -89,8 +89,8 @@
       <section id="soluciones" class="container">
         <h2 class="section-heading">Soluciones Modulares.</h2>
 
-        <div id="combustible" class="solution-block">
-          <div class="solution-text">
+        <div id="neumaticos" class="solution-block animated-section">
+          <div class="solution-text animated-text">
             <h2>Monitoreo de <strong> Consumo de Combustible</strong></h2>
             <p>
               Mida el consumo con precisión milimétrica, detecte desviaciones o
@@ -103,7 +103,7 @@
               por unidad.
             </p>
           </div>
-          <div class="solution-media">
+          <div class="solution-media animate-right-img">
             <video
               src="./assets/fuel-video-1.mp4"
               muted
@@ -116,8 +116,8 @@
           </div>
         </div>
 
-        <div id="mantenimiento" class="solution-block">
-          <div class="solution-media">
+        <div id="neumaticos" class="solution-block animated-section">
+          <div class="solution-media animate-left-img">
             <video
               src="./assets/oil-video-2.mp4"
               muted
@@ -128,7 +128,7 @@
               disablepictureinpicture
             ></video>
           </div>
-          <div class="solution-text">
+          <div class="solution-text animated-text">
             <h2>
               Mantenimiento <strong>Preventivo</strong> y
               <strong>Aceite</strong>
@@ -145,8 +145,8 @@
           </div>
         </div>
 
-        <div id="neumaticos" class="solution-block">
-          <div class="solution-text">
+        <div id="neumaticos" class="solution-block animated-section">
+          <div class="solution-text animated-text">
             <h2>Seguimiento Detallado de <strong>Neumáticos</strong></h2>
             <p>
               Monitoree la presión, la profundidad del dibujo y el historial
@@ -158,7 +158,7 @@
               rendimiento del caucho.
             </p>
           </div>
-          <div class="solution-media">
+          <div class="solution-media animate-right-img">
             <video
               src="./assets/tire-video.mp4"
               muted
@@ -229,10 +229,10 @@
       </section>
 
       <section id="reportes" class="animated-section full-screen-section">
-        <div class="reports-content container">
-          <div class="reports-media">
+        <div class="animated-content container">
+          <div class="animated-media">
             <img
-              src="./assets/pdf-report.png"
+              src="./assets/pdf-report-2.png"
               alt="Icono de reporte PDF"
               class="animate-left-img"
             />
@@ -251,14 +251,6 @@
               Personalice los períodos y las variables para obtener la vista que
               su operación necesita.
             </p>
-          </div>
-
-          <div class="reports-media">
-            <img
-              src="./assets/excel-report-.png"
-              alt="Icono de reporte Excel"
-              class="animate-right-img"
-            />
           </div>
         </div>
       </section>
@@ -447,10 +439,7 @@
       const menuToggle = document.querySelector(".menu-toggle");
       const navLinks = document.querySelector(".nav-links");
       const allLinks = document.querySelectorAll(".nav-links a");
-
-      const animatedElements = document.querySelectorAll(
-        ".animate-left-img, .animate-right-img, .feature-card"
-      );
+      const featureCards = document.querySelectorAll(".feature-card"); // Selector para observer
 
       let isAnimating = false;
       let resizeTimer;
@@ -465,7 +454,6 @@
 
       // --- 2. Funcionalidad de Videos (Reproducción automática) ---
       function initializeVideos() {
-        // Selecciona los videos de soluciones Y el nuevo video de fondo de sección
         const videos = document.querySelectorAll(
           ".solution-media video, .section-video-wrapper video"
         );
@@ -474,7 +462,6 @@
           video.playsinline = true;
           video.loop = true;
 
-          // Usar IntersectionObserver para iniciar/pausar
           const observer = new IntersectionObserver(
             (entries) => {
               entries.forEach((entry) => {
@@ -487,7 +474,7 @@
                 }
               });
             },
-            { threshold: 0.2 } // Se dispara cuando el 20% de la sección es visible
+            { threshold: 0.2 }
           );
 
           observer.observe(video);
@@ -496,6 +483,7 @@
 
       // --- 3. Animación de Hero (Scroll Parallax/Fade) ---
       function animateHero() {
+        if (!heroVisual) return;
         const rect = heroVisual.getBoundingClientRect();
         const viewHeight = window.innerHeight;
 
@@ -511,57 +499,200 @@
         heroLogo.style.opacity = progress;
       }
 
-      // --- 4. Animación de Entrada/Salida para nuevas Secciones ---
-      function checkAnimations() {
-        const viewHeight = window.innerHeight;
-        animatedElements.forEach((el) => {
-          const rect = el.getBoundingClientRect();
-          const triggerPoint = viewHeight * 0.8;
+      // --- 4. FUNCIÓN MAESTRA DE ANIMACIÓN (Incluye Soluciones, Reportes, Plataforma, Móvil) ---
+      function animateOnScroll() {
+        animateHero(); // Animación del Hero
 
-          if (rect.top < triggerPoint && rect.bottom > 0) {
-            el.classList.add("visible");
-          } else {
-            el.classList.remove("visible");
+        const viewHeight = window.innerHeight;
+
+        // --- A. Animación de Secciones Generales (Soluciones, Reportes, Plataforma, Movil, Caracteristicas) ---
+        // Asume que los divs .solution-block y sections ahora tienen la clase .animated-section
+        const sections = document.querySelectorAll(".animated-section");
+
+        sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+
+          // RANGO AMPLIADO: Asegura que el progreso llegue a 1 para hacer visibles todos los elementos
+          const startPoint = viewHeight * 1.5;
+          const endPoint = viewHeight * 0.1;
+          let progress = (startPoint - rect.top) / (startPoint - endPoint);
+          progress = Math.max(0, Math.min(1, progress));
+
+          // Selectores para imágenes/videos y texto
+          const leftEl = section.querySelector(".animate-left-img");
+          const rightEl = section.querySelector(".animate-right-img");
+          const text = section.querySelector(".animated-text");
+
+          if (leftEl) {
+            const translateX = -200 + progress * 200;
+            leftEl.style.transform = `translateX(${translateX}px)`;
+            leftEl.style.opacity = progress;
+          }
+
+          if (rightEl) {
+            const translateX = 200 - progress * 200;
+            rightEl.style.transform = `translateX(${translateX}px)`;
+            rightEl.style.opacity = progress;
+          }
+
+          if (text) {
+            const translateY = 150 - progress * 150;
+            text.style.transform = `translateY(${translateY}px)`;
+            text.style.opacity = progress;
+          }
+        });
+
+        // --- B. Animación de Precios y Features ---
+        const pricingSection = document.querySelector(".pricing-section");
+        if (pricingSection) {
+          const rect = pricingSection.getBoundingClientRect();
+
+          const startPoint = viewHeight * 1.5;
+          const endPoint = viewHeight * 0.1;
+          let progress = (startPoint - rect.top) / (startPoint - endPoint);
+          progress = Math.max(0, Math.min(1, progress));
+
+          const easedProgress = Math.pow(progress, 2.5); // Para movimiento y opacidad
+          const valueProgress = Math.pow(progress, 5); // Para el valor (efecto tardado)
+
+          const prices = {
+            free: 0,
+            plus: 49.99,
+            pro: 149.99,
+            enterprise: 499.99,
+          };
+
+          document.querySelectorAll(".pricing-card").forEach((card) => {
+            const planNameElement = card.querySelector(".plan-name");
+            if (!planNameElement) return;
+
+            const planClass = Object.keys(prices).find((p) =>
+              planNameElement.classList.contains(p)
+            );
+            if (!planClass) return;
+
+            const targetPrice = prices[planClass];
+            const priceElement = card.querySelector(".plan-price");
+            const features = card.querySelectorAll(".plan-features li");
+
+            // 1. Animación del Precio
+            if (priceElement) {
+              const span = priceElement.querySelector("span");
+              const spanText = span ? span.outerHTML : "";
+
+              const currentPrice = (targetPrice * valueProgress).toFixed(2);
+              priceElement.innerHTML = `$${currentPrice}${spanText}`;
+
+              const priceMove = 10 * (1 - easedProgress);
+              priceElement.style.transform = `translateY(${priceMove}px)`;
+              priceElement.style.opacity = easedProgress;
+            }
+
+            // 2. Animación de Características (Aparición Secuencial)
+            features.forEach((feature, index) => {
+              const featureDelay = index * 0.1;
+              const featureStart = 0.1 + featureDelay;
+              const featureEnd = featureStart + 0.3;
+
+              let featureProgress = 0;
+              if (progress >= featureStart) {
+                featureProgress =
+                  (progress - featureStart) / (featureEnd - featureStart);
+              }
+              featureProgress = Math.min(1, featureProgress);
+
+              const opacity = featureProgress;
+              const translateY = 20 * (1 - featureProgress);
+
+              feature.style.opacity = opacity;
+              feature.style.transform = `translateY(${translateY}px)`;
+            });
+          });
+        }
+      }
+
+      // --- 5. Animación de Títulos (Heading Observer) ---
+      function initializeHeadingObserver() {
+        const headings = document.querySelectorAll(
+          ".section-heading, .section-subheading"
+        );
+
+        const observer = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("heading-visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            rootMargin: "0px",
+            threshold: 0.1,
+          }
+        );
+
+        headings.forEach((heading) => {
+          if (!heading.closest(".hero-intro")) {
+            observer.observe(heading);
           }
         });
       }
 
-      // --- 5. Lógica de Scroll (Optimizado con requestAnimationFrame) ---
+      // --- 6. Animación de Feature Cards (Observer para activar la clase 'visible') ---
+      function initializeFeatureCardsObserver() {
+        const observer = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            rootMargin: "0px",
+            threshold: 0.2,
+          }
+        );
+
+        featureCards.forEach((card) => {
+          observer.observe(card);
+        });
+      }
+
+      // --- 7. Lógica de Scroll (Optimizado con requestAnimationFrame) ---
       function handleScroll() {
         if (!isAnimating) {
           isAnimating = true;
-          requestAnimationFrame(updateAnimations);
+          requestAnimationFrame(() => {
+            animateOnScroll();
+            isAnimating = false;
+          });
         }
-      }
-
-      function updateAnimations() {
-        // Solo animar si la sección hero está visible o cerca
-        if (heroVisual.getBoundingClientRect().bottom > 0) {
-          animateHero();
-        }
-        checkAnimations();
-        isAnimating = false;
       }
 
       // --- Gestión de Eventos ---
       window.addEventListener("scroll", handleScroll, { passive: true });
+
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           setVhVariable();
-          updateAnimations();
+          animateOnScroll();
         }, 250);
       });
 
       window.addEventListener("load", () => {
         initializeVideos();
-        updateAnimations();
+        initializeHeadingObserver();
+        initializeFeatureCardsObserver();
+        animateOnScroll();
       });
 
-      // --- Funcionalidad del Menú Móvil ---
+      // --- Funcionalidad del Menú Móvil (sin cambios) ---
       function toggleMenu() {
         const isOpen = navLinks.classList.toggle("open");
-        // Bloquear el scroll del cuerpo cuando el menú está abierto
         document.body.style.overflow = isOpen ? "hidden" : "auto";
       }
 
@@ -574,14 +705,11 @@
         link.addEventListener("click", (e) => {
           const href = link.getAttribute("href") || "";
 
-          // Si NO es una ancla interna (empieza con '#'), permitir navegación normal.
           if (!href.startsWith("#")) {
-            // cerrar menú si está abierto y dejar que el navegador siga el link
             if (navLinks.classList.contains("open")) toggleMenu();
             return;
           }
 
-          // Manejar solo anclas internas con smooth scroll
           e.preventDefault();
           if (navLinks.classList.contains("open")) toggleMenu();
 
@@ -594,7 +722,6 @@
           }
         });
       });
-      // Se omite el listener de clic en el body, ya que el menú es overlay de pantalla completa y se cierra al hacer clic en un enlace o en el botón de toggle.
     </script>
   </body>
 </html>
