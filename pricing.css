@@ -1,0 +1,114 @@
+/* ==================== PLANES Y PRECIOS ==================== */
+.pricing-section {
+  padding: var(--section-padding-v) var(--section-padding-h);
+  text-align: center;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.pricing-card {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.pricing-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-8px);
+}
+
+.plan-name {
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.plan-name.free {
+  color: #00ff88;
+}
+.plan-name.plus {
+  color: #ff8a00;
+}
+.plan-name.pro {
+  color: #ffff00;
+}
+.plan-name.enterprise {
+  color: #00d8ff;
+}
+
+.plan-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.plan-price span {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.plan-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #ad5cf7;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.plan-features {
+  list-style: none;
+  color: var(--muted);
+  text-align: left;
+  margin: 1.5rem 0;
+  padding: 0;
+  font-weight: 300;
+  line-height: 1.8;
+}
+
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.plan-features li::before {
+  content: "•";
+  color: var(--accent);
+  flex-shrink: 0;
+  width: 1rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.cta-main {
+  margin-top: auto;
+  font-size: 1rem;
+}
+
+.current-plan {
+  border-color: var(--accent);
+  background: rgba(255, 255, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .pricing-card {
+    padding: 2rem 1.5rem;
+  }
+  .plan-price {
+    font-size: 2rem;
+  }
+}
