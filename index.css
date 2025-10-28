@@ -57,8 +57,15 @@ section:not(.full-screen-section) {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   margin-bottom: 20px;
   line-height: 1.1;
+  transform: translateY(-50px);
+  opacity: 0;
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 0.8s ease-out;
 }
-
+.section-heading.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
 .section-subheading {
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   color: var(--muted);
@@ -103,7 +110,7 @@ section:not(.full-screen-section) {
 /* ==================== NAV (FIXED & IMPROVED) ==================== */
 nav {
   position: fixed;
-  top: 0.5rem;
+  top: 0rem;
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 4rem);
@@ -350,20 +357,6 @@ main {
   margin-top: 0; /* Vuelve a su posición original */
 }
 
-/* Aplicación del retraso escalonado (Staggered Delay) */
-.features-grid .feature-card:nth-child(1) {
-  transition-delay: 0.1s;
-}
-.features-grid .feature-card:nth-child(2) {
-  transition-delay: 0.25s;
-}
-.features-grid .feature-card:nth-child(3) {
-  transition-delay: 0.4s;
-}
-.features-grid .feature-card:nth-child(4) {
-  transition-delay: 0.55s;
-}
-
 .feature-card h3 {
   color: var(--white);
   margin-bottom: 0.75rem;
@@ -457,11 +450,29 @@ main {
 
 .animated-text {
   flex: 1;
-  text-align: left;
   opacity: 0;
-  transform: translateY(100px);
-  transition: none; /* quitamos transition para controlar por JS */
+  transition: none; /* controlado por JS */
   will-change: transform, opacity;
+  /* fallback alignment si no se especifica: izquierda */
+  text-align: left;
+}
+
+/* Variante: animación desde la izquierda */
+.animated-text.left {
+  text-align: left;
+  transform: translateX(-250px) translateY(20px) scale(0.98);
+}
+
+/* Variante: animación desde la derecha */
+.animated-text.right {
+  text-align: right;
+  transform: translateX(250px) translateY(20px) scale(0.98);
+}
+
+/* Variante opcional: centrado (no lateral) */
+.animated-text.center {
+  text-align: center;
+  transform: translateY(120px) scale(0.98);
 }
 
 .animated-text h2 {
@@ -882,6 +893,17 @@ footer {
       transparent 100%
     );
   -webkit-mask-composite: source-in;
+}
+.cta-main i.fa-envelope {
+  font-size: 1.5rem; /* Ajusta el tamaño del icono */
+  /* Asegura que el botón sea un cuadrado o círculo de buen tamaño para el toque */
+  padding: 1rem;
+  height: 10px;
+  width: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Si quieres que sea circular */
 }
 
 /* El resto de estilos de la sección se mantienen igual para la estructura */

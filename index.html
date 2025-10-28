@@ -16,6 +16,11 @@
     />
     <link rel="stylesheet" href="pricing.css" />
     <link rel="stylesheet" href="index.css" />
+    <!-- INCLUIR Font Awesome para el icono de email -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
   </head>
 
   <body>
@@ -87,10 +92,10 @@
       </section>
 
       <section id="soluciones" class="container">
-        <h2 class="section-heading">Soluciones Modulares.</h2>
+        <h2 class="section-heading">Soluciones Modulares</h2>
 
-        <div id="neumaticos" class="solution-block animated-section">
-          <div class="solution-text animated-text">
+        <div id="combustible" class="solution-block animated-section">
+          <div class="solution-text animated-text right">
             <h2>Monitoreo de <strong> Consumo de Combustible</strong></h2>
             <p>
               Mida el consumo con precisión milimétrica, detecte desviaciones o
@@ -116,7 +121,7 @@
           </div>
         </div>
 
-        <div id="neumaticos" class="solution-block animated-section">
+        <div id="mantenimiento" class="solution-block animated-section">
           <div class="solution-media animate-left-img">
             <video
               src="./assets/oil-video-2.mp4"
@@ -128,7 +133,7 @@
               disablepictureinpicture
             ></video>
           </div>
-          <div class="solution-text animated-text">
+          <div class="solution-text animated-text left">
             <h2>
               Mantenimiento <strong>Preventivo</strong> y
               <strong>Aceite</strong>
@@ -146,14 +151,14 @@
         </div>
 
         <div id="neumaticos" class="solution-block animated-section">
-          <div class="solution-text animated-text">
+          <div class="solution-text animated-text right">
             <h2>Seguimiento Detallado de <strong>Neumáticos</strong></h2>
             <p>
               Monitoree la presión, la profundidad del dibujo y el historial
               completo de rotación y reemplazos.
             </p>
             <p>
-              Asigne un ciclo de vida exacto a cada neumático de sus vhículos,
+              Asigne un ciclo de vida exacto a cada neumático de sus vehículos,
               minimizando los gastos por reemplazos prematuros y maximizando el
               rendimiento del caucho.
             </p>
@@ -238,7 +243,7 @@
             />
           </div>
 
-          <div class="animated-text">
+          <div class="animated-text right">
             <h2>Exportación Inteligente de <strong>Reportes</strong></h2>
             <p>
               Centralice la información de sus vehículos y genere reportes
@@ -256,8 +261,12 @@
       </section>
 
       <section id="plataforma" class="animated-section full-screen-section">
+        <h2 class="section-heading">Disponible en cualquier plataforma</h2>
+        <p class="section-subheading">
+          Acceda a la información y herramientas exactamente donde las necesita.
+        </p>
         <div class="animated-content container">
-          <div class="animated-text">
+          <div class="animated-text left">
             <h2>Gestión <strong>Web</strong> sin Límites</h2>
             <p>
               Acceda a la potencia completa de Pits desde cualquier navegador de
@@ -286,7 +295,7 @@
               class="animate-left-img"
             />
           </div>
-          <div class="animated-text">
+          <div class="animated-text right">
             <h2>Movilidad y Control al <strong>Instante</strong></h2>
             <p>
               Lleve el poder de Pits en su bolsillo. Nuestra aplicación móvil
@@ -410,14 +419,21 @@
       <section id="contacto" class="animated-section full-screen-section">
         <div class="animated-content container">
           <div class="animated-text">
-            <h2>
-              ¿Desea más <strong class="accent-text">información</strong> ?
-            </h2>
-            <h3>Contáctenos hoy mismo.</h3>
-            <p class="contact-email">info@pits-app.com</p>
-            <a href="mailto:info@pits-app.com" class="cta-main"
-              >Enviar Mensaje</a
+            <h3>
+              ¿Quieres conocer más
+              <strong class="accent-text">información</strong> ?
+            </h3>
+            <p></p>
+            <h2><strong class="accent-text">Contáctanos</strong> hoy mismo.</h2>
+            <a
+              href="mailto:info@pits-app.com"
+              class="cta-main"
+              aria-label="Enviar Mensaje por Email"
             >
+              <i class="fas fa-envelope"></i>
+            </a>
+            <p></p>
+            <p></p>
           </div>
         </div>
       </section>
@@ -536,8 +552,21 @@
           }
 
           if (text) {
-            const translateY = 150 - progress * 150;
-            text.style.transform = `translateY(${translateY}px)`;
+            // Mantener alineación pero animar desde abajo
+            const isRight = text.classList.contains("right");
+            const isLeft = text.classList.contains("left");
+
+            // Configurar alineación del texto
+            text.style.textAlign = isRight
+              ? "right"
+              : isLeft
+              ? "left"
+              : "center";
+
+            // Animar desde abajo para todos los casos
+            const translateY = 200 - progress * 200; // Aumentado a 200px para más impacto
+            const scale = 0.95 + progress * 0.05;
+            text.style.transform = `translateY(${translateY}px) scale(${scale})`;
             text.style.opacity = progress;
           }
         });
@@ -617,6 +646,34 @@
           ".section-heading, .section-subheading"
         );
 
+        const headingObserverCallback = (entries, observer) => {
+          entries.forEach((entry) => {
+            // 1. Si el elemento es visible (entra en el viewport)
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+            } else {
+              // 2. Si el elemento NO es visible (sale del viewport, ya sea hacia arriba o abajo)
+              // Remover la clase hace que el elemento regrese a su estado inicial animado.
+              entry.target.classList.remove("is-visible");
+            }
+          });
+        };
+
+        const headingObserverOptions = {
+          root: null, // Observa contra el viewport
+          rootMargin: "0px",
+          threshold: 0.1, // Se activa cuando el 10% del elemento es visible/invisible
+        };
+
+        const headingObserver = new IntersectionObserver(
+          headingObserverCallback,
+          headingObserverOptions
+        );
+
+        // Asignar el observador a todos los títulos
+        headings.forEach((heading) => {
+          headingObserver.observe(heading);
+        });
         const observer = new IntersectionObserver(
           (entries, observer) => {
             entries.forEach((entry) => {
@@ -715,10 +772,16 @@
 
           const targetSection = document.querySelector(href);
           if (targetSection) {
-            const offset =
-              targetSection.getBoundingClientRect().top + window.scrollY;
-            const finalPosition = href === "#inicio" ? 0 : offset - NAV_OFFSET;
-            window.scrollTo({ top: finalPosition, behavior: "smooth" });
+            const offset = NAV_OFFSET;
+            const elementPosition = targetSection.getBoundingClientRect().top;
+            const navbarHeight = offset; // Usar la altura del navbar como offset
+            const scrollToPosition =
+              elementPosition + window.scrollY - navbarHeight;
+
+            window.scrollTo({
+              top: scrollToPosition,
+              behavior: "smooth",
+            });
           }
         });
       });
